@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, render_template, request
 
 from app.database import add_lead, get_all_leads
-from app.services.ai_service import ask_ai
+from app.services.ai_service import ai_service, AIServiceError
 
 
 pages_bp = Blueprint("pages", __name__)
@@ -23,6 +23,7 @@ def sohbet():
     try:
         data = request.get_json(silent=True) or {}
         message = data.get("message", "").strip()
+        history = data.get("history", [])
 
         if not message:
             return jsonify({
@@ -30,14 +31,15 @@ def sohbet():
                 "error": "Mesaj alanı boş bırakılamaz."
             }), 400
 
-        answer = ask_ai(message)
+        answer = ai_service.yanit_uret(message, history)
 
         return jsonify({
             "success": True,
             "answer": answer
         })
 
-    except Exception:
+    except AIServiceError as error:
+        
         return jsonify({
             "success": False,
             "error": "Yapay zekâ servisine şu anda ulaşılamıyor."
