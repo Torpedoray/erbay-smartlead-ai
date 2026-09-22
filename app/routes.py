@@ -51,22 +51,22 @@ def create_lead():
     try:
         data = request.get_json(silent=True) or {}
 
-        name = data.get("name", "").strip()
-        phone = data.get("phone", "").strip()
+        isim = data.get("isim", "").strip()
+        telefon = data.get("telefon", "").strip()
         email = data.get("email", "").strip()
-        message = data.get("message", "").strip()
+        mesaj = data.get("mesaj", "").strip()
 
-        if not name or not phone:
+        if not isim or not telefon:
             return jsonify({
                 "success": False,
                 "error": "İsim ve telefon alanları zorunludur."
             }), 400
 
         add_lead(
-            name=name,
-            phone=phone,
+            name=isim,
+            phone=telefon,
             email=email,
-            message=message
+            message=mesaj
         )
 
         return jsonify({
